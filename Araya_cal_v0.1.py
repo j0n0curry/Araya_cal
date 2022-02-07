@@ -150,12 +150,12 @@ def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
 def concord_set(df1,df2):
     ####take two araya data and merge in to new set - do no mutate original post cache and session state. 
     cd_set = df1.merge(df2[['FAM_RFU', 'VIC_RFU','ROX_RFU','norm_N_Cov','norm_RNaseP', 'Result']], how = 'left', left_on = df1['UID'], right_on = df2['UID'])
-    st.dataframe(cd_set.head(2))
+    
     cd_set['concord'] = cd_set['Result_x'] == cd_set['Result_y']
-    #st.write(cd_set.concord.describe())
+    
     col1,col2 = st.columns(2)
     
-    #st.write(cd_set.concord.unique())
+    
     #create eval between two states
     pos_concord = cd_set.concord.value_counts()[True]
     neg_concord = cd_set.concord.value_counts()[False]
@@ -214,19 +214,14 @@ def concord_set(df1,df2):
 
     ax_nstd.scatter(x2, y2, s=10, c= cd_set.concord.map(colors))
 
-    #confidence_ellipse(x2, y2, ax_nstd, n_std=1,
-     #                  label=r'$1\sigma$', edgecolor='red', linewidth=3.0)
-    #confidence_ellipse(x2, y2, ax_nstd, n_std=2,
-     #                  label=r'$2\sigma$', edgecolor='grey', linestyle='--', linewidth=3.0)
-    #confidence_ellipse(x2, y2, ax_nstd, n_std=3,
-     #                  label=r'$3\sigma$', edgecolor='green', linestyle=':', linewidth=3.0)
+  
 
     ax_nstd.set_xlabel('normalised VIC')
     ax_nstd.set_ylabel('normalised FAM')
     ax_nstd.set_title('A2 - Positive Paitent Samples - FAM / VIC RFU ')# + str(z_factor_score))
 
     ax_nstd.legend()
-    #plt.savefig('A2_all~data.png')
+    
 
 
     with col2:
@@ -249,7 +244,7 @@ def concord_set(df1,df2):
           
     y1 = df1['norm_N_Cov']
 
-    #spearman = stats.spermanr
+    
 
     ax_nstd.axvline(c='black', lw=2)
     ax_nstd.axhline(c='black', lw=2)
@@ -307,12 +302,14 @@ uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['cs
 
 df1 = load_data(uploaded_file1)
 
-st.dataframe(df1.head())
     
 df2 = load_data(uploaded_file2)
-st.dataframe(df2.head())
+
 if uploaded_file1 and uploaded_file2 is not None:
     concord_set(df1,df2)
+else:
+    st.warning('Please upload Araya files')
+    st.stop() 
 
 # callback to session_state
 # initialize session state variable
