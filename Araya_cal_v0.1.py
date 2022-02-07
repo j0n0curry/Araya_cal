@@ -155,8 +155,8 @@ def concord_set(df1,df2):
     
     st.write(cd_set.concord.unique())
     #create eval between two states
-    pos_concord = cd_set.concord.value_counts()[True]
-    neg_concord = cd_set.concord.value_counts()[False]
+    pos_concord = cd_set.concord.value_counts()[true]
+    neg_concord = cd_set.concord.value_counts()[false]
     
     #st.write(pos_concord)
     #generate concordance eval result - compare Test to Reference
