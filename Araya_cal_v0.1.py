@@ -309,7 +309,8 @@ df1 = load_data(uploaded_file1)
     
 df2 = load_data(uploaded_file2)
 
-cd_set = concord_set(df1,df2)
+if df1 and df2 is not None:
+    concord_set(df1,df2)
 
 # callback to session_state
 # initialize session state variable
