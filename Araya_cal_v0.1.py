@@ -153,7 +153,7 @@ def concord_set(df1,df2):
     cd_set['concord'] = cd_set['Result_x'] == cd_set['Result_y']
     col1,col2 = st.columns(2)
     
-    st.write(cd_set.concord)
+    st.write(cd_set.concord.unique())
     #create eval between two states
     pos_concord = cd_set.concord.value_counts()[True]
     neg_concord = cd_set.concord.value_counts()[False]
