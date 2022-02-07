@@ -306,9 +306,11 @@ uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['cs
 
 
 df1 = load_data(uploaded_file1)
+
+st.dataframe(df1.head())
     
 df2 = load_data(uploaded_file2)
-
+st.dataframe(df2.head())
 if uploaded_file1 and uploaded_file2 is not None:
     concord_set(df1,df2)
 
