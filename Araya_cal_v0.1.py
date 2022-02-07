@@ -300,12 +300,11 @@ uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['cs
 
 
 
-df1 = load_data(uploaded_file1)
 
-    
-df2 = load_data(uploaded_file2)
 
 if uploaded_file1 and uploaded_file2 is not None:
+    df1 = load_data(uploaded_file1)
+    df2 = load_data(uploaded_file2)
     concord_set(df1,df2)
 else:
     st.warning('Please upload Araya files')
