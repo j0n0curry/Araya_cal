@@ -1,14 +1,12 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
+import scipy.stats as stats
+import statsmodels.api as sm
+import pylab
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
-import pandas as pd
-import scipy.stats as stats
-import numpy as np
-import statsmodels.api as sm
-import pylab
 import math
 import seaborn as sns 
 pd.set_option('display.max_columns', None)
@@ -155,7 +153,7 @@ def concord_set(df1,df2):
     cd_set['concord'] = cd_set['Result_x'] == cd_set['Result_y']
     col1,col2 = st.columns(2)
     
-    #st.write(cd_set.concord.unique())
+    st.write(cd_set.concord)
     #create eval between two states
     pos_concord = cd_set.concord.value_counts()[True]
     neg_concord = cd_set.concord.value_counts()[False]
