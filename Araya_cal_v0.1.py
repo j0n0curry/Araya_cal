@@ -151,7 +151,7 @@ def concord_set(df1,df2):
     ####take two araya data and merge in to new set - do no mutate original post cache and session state. 
     cd_set = df1.merge(df2[['FAM_RFU', 'VIC_RFU','ROX_RFU','norm_N_Cov','norm_RNaseP', 'Result']], how = 'left', left_on = df1['UID'], right_on = df2['UID'])
     st.dataframe(cd_set.head(2))
-    cd_set['concord'] = cd_set['Result_x'] cd_set['Result_y'], True, False)
+    cd_set['concord'] = cd_set['Result_x'] == cd_set['Result_y']
     st.write(cd_set.concord.describe())
     col1,col2 = st.columns(2)
     
