@@ -29,6 +29,7 @@ st.title('Araya comparison analysis tool ' +str(version))
 
 st.write("Upload parsed csv files for comparison - use ePCR Viewer to download 'all data csv' for each Araya before starting here - do this for each read set for your 'test Araya'")
 st.write("Link to ePCR viewer [Here](https://share.streamlit.io/j0n0curry/new-calibration-test/main/ePCR_new_cal_OX_viewv1.py)")
+st.write('Uploaded files - Reference is the Araya being used to compare to while test is the Araya being adjusted - no warranties supplied or implied for this application')
 st.write('click on images to increase size')
 ####start loading data and set up for persistent dataframe via cache ans session state - TODO
 
