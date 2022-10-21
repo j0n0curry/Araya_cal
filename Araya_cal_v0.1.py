@@ -174,13 +174,13 @@ def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
 st.sidebar.header('Reference Araya')
 Araya_Ref = st.sidebar.text_input('Please enter the Serial Number of the Reference Araya here')
 
-uploaded_file1 = st.sidebar.file_uploader("Uploaded Reference Araya", type=['csv'], accept_multiple_files=False, key = 'key')
+uploaded_file1 = st.sidebar.file_uploader("Uploaded Reference Araya", type=['csv'], accept_multiple_files=False)
 
 
 st.sidebar.header('Test Araya')
 Araya_Test = st.sidebar.text_input('Please enter the Serial Number of the Test Araya here')
 
-uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['csv'], accept_multiple_files=False, key = 'key')
+uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['csv'], accept_multiple_files=False)
 
 
 
