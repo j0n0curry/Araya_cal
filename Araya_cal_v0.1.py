@@ -16,7 +16,7 @@ sns.set_theme()
 st.set_page_config(layout="wide")
 
 
-version = 0.2
+version = 0.3
 
 
     
@@ -27,10 +27,13 @@ version = 0.2
 
 st.title('Araya comparison analysis tool ' +str(version))
 
+st.write('Please ensure you have read SOP - Araya Characterization / N# - version XXXXX prior to comencing the report') 
+
 st.write("Upload parsed csv files for comparison - use ePCR Viewer to download 'all data csv' for each Araya before starting here - do this for each read set for your 'test Araya'")
 st.write("Link to ePCR viewer [Here](https://share.streamlit.io/j0n0curry/new-calibration-test/main/ePCR_new_cal_OX_viewv1.py)")
 st.write('Uploaded files - Reference is the Araya being used to compare to while test is the Araya being adjusted - no warranties supplied or implied for this application')
 st.write('click on images to increase size')
+
  
 ####start loading data and set up for persistent dataframe via cache ans session state - TODO
 
@@ -49,9 +52,9 @@ def assign_tape_dye(df):
 
 
 def normalise_values(df):
-    ROX_mean = df[df['dye_type'] == 'ROX_RFU']['ROX_RFU'].mean()
-    df['nVIC'] = df[df['dye_type'] == 'VIC_RFU']['VIC_RFU'] / ROX_mean
-    df['nFAM'] = df[df['dye_type'] == 'FAM_RFU']['FAM_RFU'] / ROX_mean
+    ROX_median = df[df['dye_type'] == 'ROX_RFU']['ROX_RFU'].median()
+    df['nVIC'] = df[df['dye_type'] == 'VIC_RFU']['VIC_RFU'] / ROX_median
+    df['nFAM'] = df[df['dye_type'] == 'FAM_RFU']['FAM_RFU'] / ROX_median
     return(df)
 
 
@@ -100,6 +103,7 @@ def pct_change(first, second):
                 change = -((diff / first) * 100)
         except ZeroDivisionError:
             return float('inf')
+        #st.write(change)
         return change
         
 
@@ -167,10 +171,15 @@ def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
 
 
 
-
-
+st.sidebar.header('Reference Araya')
+Araya_Ref = st.sidebar.text_input('Please enter the Serial Number of the Reference Araya here')
 
 uploaded_file1 = st.sidebar.file_uploader("Uploaded Reference Araya", type=['csv'], accept_multiple_files=False, key = 'key')
+
+
+st.sidebar.header('Test Araya')
+Araya_Test = st.sidebar.text_input('Please enter the Serial Number of the Test Araya here')
+
 uploaded_file2 = st.sidebar.file_uploader("Uploaded Comparator Araya", type=['csv'], accept_multiple_files=False, key = 'key')
 
 
@@ -202,9 +211,7 @@ table = []
 
 def conf_plot(data, data2, name, n, k, m, d, *args, **kwargs):
     
-    
-    
-  
+
     fig, ax_nstd = plt.subplots(figsize=(10, 8))
     
     n = str(n)
@@ -230,9 +237,11 @@ def conf_plot(data, data2, name, n, k, m, d, *args, **kwargs):
 
     median_diff = pct_change(x.median(),y.median())
     
+    #st.write(x.median())
+    #st.write(y.median())
     
-    frame = pd.DataFrame([[name, median_diff, p, r_squared]],
-                       columns=['Dye Channel','Percentage Median Difference', 'Pearson Correlation', 'R_squared'])
+    frame = pd.DataFrame([[name, np.round(x.median(),0), y.median(), median_diff, p, r_squared]],
+                       columns=['Dye Channel', 'Reference Median', 'Test Median', 'Percentage Median Difference', 'Pearson Correlation', 'R_squared'])
     table.append(frame)
 
     ax_nstd.scatter(x, y, s=8)
@@ -317,7 +326,14 @@ final.set_index('Dye Channel', inplace = True)
 
 final['Pass Fail']= final.apply(lambda row: pass_fail(row), axis = 1)
 
+machine_info = pd.DataFrame([[Araya_Ref, Araya_Test]], columns = ['Reference Araya Serial Number', 'Test Araya Serial Number'])
+
+
+st.table(machine_info)
+
 st.table(final)
+
+
 
 if 'Fail' in final['Pass Fail'].unique():
     st.header('Verification Failed')
