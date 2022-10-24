@@ -9,6 +9,7 @@ from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
 import math
 import seaborn as sns 
+
 pd.set_option('display.max_columns', None)
 sns.set_theme()
 
@@ -16,7 +17,7 @@ sns.set_theme()
 st.set_page_config(layout="wide")
 
 
-version = 0.3
+version = 0.2
 
 
     
@@ -57,6 +58,13 @@ def normalise_values(df):
     df['nFAM'] = df[df['dye_type'] == 'FAM_RFU']['FAM_RFU'] / ROX_median
     return(df)
 
+def zscore_values(df): 
+    df['norm_zscore'] = (df.ROX_RFU - df.ROX_RFU.mean())/df.ROX_RFU.std(ddof=0)
+    df['cfo_zscore'] = (df.VIC_RFU - df.VIC_RFU.mean())/df.VIC_RFU.std(ddof=0)
+    df['fam_zscore'] = (df.FAM_RFU - df.FAM_RFU.mean())/df.FAM_RFU.std(ddof=0)
+    df['nFAM_zscore'] = (df.norm_N_Cov - df.norm_N_Cov.mean())/df.norm_N_Cov.std(ddof=0)
+    df['nVIC_zscore'] = (df.norm_RNaseP - df.norm_RNaseP.mean())/df.norm_RNaseP.std(ddof=0)
+    return(df)
 
 
 @st.cache
@@ -64,6 +72,7 @@ def load_data(data):
     df = pd.read_csv(data)
     df = assign_tape_dye(df)
     df = normalise_values(df)
+    df = zscore_values(df)
     
    
     df['UID'] = df['Run_ID'].astype(str) + df['Well']
@@ -107,26 +116,24 @@ def pct_change(first, second):
         return change
         
 
+
+        
+
 #assign confidence elipse - calculate covariance matrix - use covar to calculate Pearson later. 
 
 def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
     """
     Create a plot of the covariance confidence ellipse of *x* and *y*.
-
     Parameters
     ----------
     x, y : array-like, shape (n, )
         Input data.
-
     ax : matplotlib.axes.Axes
         The axes object to draw the ellipse into.
-
     n_std : float
         The number of standard deviations to determine the ellipse's radiuses.
-
     **kwargs
         Forwarded to `~matplotlib.patches.Ellipse`
-
     Returns
     -------
     matplotlib.patches.Ellipse
@@ -206,7 +213,7 @@ if "updated_df2" not in st.session_state:
 table = []
 
 
-
+st.write(df1.head())
 
 
 def conf_plot(data, data2, name, n, k, m, d, *args, **kwargs):
@@ -240,7 +247,7 @@ def conf_plot(data, data2, name, n, k, m, d, *args, **kwargs):
     #st.write(x.median())
     #st.write(y.median())
     
-    frame = pd.DataFrame([[name, np.round(x.median(),0), y.median(), median_diff, p, r_squared]],
+    frame = pd.DataFrame([[name, np.round(x.median(),0), np.round(y.median(),0), np.round(median_diff,0), p, r_squared]],
                        columns=['Dye Channel', 'Reference Median', 'Test Median', 'Percentage Median Difference', 'Pearson Correlation', 'R_squared'])
     table.append(frame)
 
@@ -265,8 +272,8 @@ def conf_plot(data, data2, name, n, k, m, d, *args, **kwargs):
     bins = 100
     
     plt.figure(figsize = [10,8])
-    plt.hist(x, bins, alpha=0.5, label=str(m))
-    plt.hist(y, bins, alpha=0.5, label=str(d))
+    plt.hist(x, bins, alpha=0.5, label=str(m), edgecolor ='black')
+    plt.hist(y, bins, alpha=0.5, label=str(d), edgecolor = 'black')
     
     plt.legend(loc='upper right')
     plt.xlabel(str(n) + ' Araya')
